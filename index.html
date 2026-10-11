@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#12091a">
+<title>Islam Sherif — Henna Ceremony</title>
+<style>
+:root{--purple:#6f18a2;--deep:#100817;--silver:#f3eef5}
+*{box-sizing:border-box}
+html,body{margin:0;width:100%;min-height:100%;background:#08060b;color:white;font-family:Georgia,'Times New Roman',serif}
+body{overflow:hidden}
+.stage{position:relative;width:100%;height:100dvh;min-height:540px;overflow:hidden;background:#100817}
+.page{position:absolute;inset:0;opacity:0;visibility:hidden;transition:opacity .9s ease;overflow:hidden}
+.page.active{opacity:1;visibility:visible}
+.art{position:absolute;inset:0;width:100%;height:100%;object-fit:fill;object-position:center;background:#100817}
+.page:after{content:"";position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse at center,transparent 50%,rgba(0,0,0,.22) 100%)}
+.hotspot{position:absolute;z-index:20;display:block;border:0;background:transparent;cursor:pointer;border-radius:50%;-webkit-tap-highlight-color:transparent}
+.hotspot:focus-visible{outline:2px solid #d7a8ff;outline-offset:4px}
+#openBtn{left:31%;top:59%;width:38%;height:17%}
+#locationBtn{left:6%;top:78%;width:22%;height:15%}
+#rsvpBtn{left:28%;top:78%;width:22%;height:15%}
+#shareBtn{left:50%;top:78%;width:22%;height:15%}
+#photosBtn{left:72%;top:78%;width:22%;height:15%}
+.sparkles,.petals{position:absolute;inset:0;z-index:3;pointer-events:none;overflow:hidden}
+.spark{position:absolute;width:2px;height:2px;border-radius:50%;background:#fff;box-shadow:0 0 5px 2px rgba(255,255,255,.7),0 0 13px 4px rgba(195,143,255,.45);animation:twinkle var(--dur,3s) ease-in-out infinite;opacity:0}
+.spark:after{content:"";position:absolute;width:22px;height:1px;left:-10px;top:1px;background:linear-gradient(90deg,transparent,#fff,transparent);transform:rotate(-25deg)}
+@keyframes twinkle{0%,100%{opacity:0;transform:scale(.4)}45%{opacity:.9;transform:scale(1.2)}60%{opacity:.2;transform:scale(.7)}}
+.petal{position:absolute;top:-8%;width:15px;height:24px;border-radius:90% 10% 85% 15%;background:linear-gradient(135deg,rgba(211,157,255,.06),rgba(139,40,196,.55),rgba(70,10,104,.16));border:1px solid rgba(221,185,255,.22);filter:blur(.15px);animation:fall var(--fall,12s) linear infinite;opacity:0}
+@keyframes fall{0%{transform:translate3d(0,-5vh,0) rotate(0deg);opacity:0}10%{opacity:.6}80%{opacity:.45}100%{transform:translate3d(var(--drift,60px),110vh,0) rotate(500deg);opacity:0}}
+.silver-shimmer{position:absolute;inset:0;z-index:2;pointer-events:none;mix-blend-mode:screen;background:linear-gradient(115deg,transparent 35%,rgba(255,255,255,.1) 45%,rgba(255,255,255,.42) 49%,rgba(190,133,255,.12) 52%,transparent 62%);background-size:230% 100%;animation:shine 5s linear infinite;opacity:.42}
+@keyframes shine{0%{background-position:150% 0}100%{background-position:-80% 0}}
+#musicToggle{position:absolute;right:12px;top:12px;z-index:10;border:1px solid rgba(228,199,255,.65);color:#fff;background:rgba(20,8,30,.72);border-radius:24px;padding:9px 12px;font:12px Arial,sans-serif;letter-spacing:.04em;backdrop-filter:blur(8px)}
+#status{position:absolute;left:50%;bottom:10px;transform:translateX(-50%);z-index:10;color:rgba(255,255,255,.72);font:11px Arial,sans-serif;white-space:nowrap;text-shadow:0 1px 6px #000}
+@media (max-aspect-ratio: 2/3){.art{object-fit:fill}.hotspot{transform:translateZ(0)}}
+@media (min-aspect-ratio: 3/4){.stage{max-width:560px;margin:auto}.art{object-fit:fill}}
+@media (prefers-reduced-motion:reduce){.spark,.petal,.silver-shimmer{animation-duration:20s}}
+</style>
+</head>
+<body>
+<main class="stage" aria-label="Interactive henna invitation">
+  <section class="page active" id="page1" aria-label="Invitation cover">
+    <img class="art" src="invitation-cover.png" alt="Henna ceremony invitation for Islam Sherif">
+    <div class="silver-shimmer"></div>
+    <div class="sparkles" aria-hidden="true"></div>
+    <div class="petals" aria-hidden="true"></div>
+    <button class="hotspot" id="openBtn" aria-label="Open invitation"></button>
+  </section>
+  <section class="page" id="page2" aria-label="Invitation details">
+    <img class="art" src="invitation-details.png" alt="Henna ceremony details and invitation actions">
+    <div class="silver-shimmer"></div>
+    <div class="sparkles" aria-hidden="true"></div>
+    <div class="petals" aria-hidden="true"></div>
+    <button class="hotspot" id="locationBtn" aria-label="Open location in Google Maps"></button>
+    <button class="hotspot" id="rsvpBtn" aria-label="Confirm attendance"></button>
+    <button class="hotspot" id="shareBtn" aria-label="Share invitation"></button>
+    <button class="hotspot" id="photosBtn" aria-label="Open henna photos"></button>
+  </section>
+  <button id="musicToggle" aria-label="Toggle background music">♫ Music</button>
+  <div id="status" aria-live="polite">Tap “Open Invitation” to continue</div>
+  <audio id="music" preload="auto" loop src="background-music.mp3"></audio>
+</main>
+<script>
+/* EDIT THESE LINKS before publishing:
+   RSVP_WHATSAPP: include country code, digits only (example: 2010XXXXXXXX)
+   PHOTOS_URL: link to your Google Photos/Drive album
+*/
+const RSVP_WHATSAPP = ""; // e.g. "2010XXXXXXXX"
+const PHOTOS_URL = "";    // e.g. "https://photos.app.goo.gl/your-album"
+const MAPS_QUERY = "Hilton Hotel Ballroom (A)";
+const INVITATION_URL = window.location.href;
+const page1=document.getElementById('page1'), page2=document.getElementById('page2');
+const music=document.getElementById('music'), statusEl=document.getElementById('status');
+let opened=false;
+function decorate(root){
+  const sparkWrap=root.querySelector('.sparkles'), petalWrap=root.querySelector('.petals');
+  for(let i=0;i<38;i++){
+    const s=document.createElement('i');s.className='spark';
+    s.style.left=(Math.random()*100)+'%';s.style.top=(Math.random()*100)+'%';
+    s.style.setProperty('--dur',(2+Math.random()*4)+'s');s.style.animationDelay=(-Math.random()*6)+'s';
+    sparkWrap.appendChild(s);
+  }
+  for(let i=0;i<13;i++){
+    const p=document.createElement('i');p.className='petal';
+    p.style.left=(Math.random()*100)+'%';p.style.setProperty('--fall',(10+Math.random()*12)+'s');
+    p.style.setProperty('--drift',(-90+Math.random()*180)+'px');p.style.animationDelay=(-Math.random()*20)+'s';
+    p.style.transform='scale('+(0.55+Math.random()*.8)+')';
+    petalWrap.appendChild(p);
+  }
+}
+document.querySelectorAll('.page').forEach(decorate);
+document.getElementById('openBtn').addEventListener('click',async()=>{
+  opened=true;page1.classList.remove('active');page2.classList.add('active');
+  statusEl.textContent='Henna ceremony details';
+  try{await music.play();document.getElementById('musicToggle').textContent='♫ Music on'}
+  catch(e){statusEl.textContent='Tap Music to start the soundtrack';}
+});
+document.getElementById('locationBtn').addEventListener('click',()=>{
+  window.location.href='https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(MAPS_QUERY);
+});
+document.getElementById('rsvpBtn').addEventListener('click',()=>{
+  if(RSVP_WHATSAPP){
+    const msg=encodeURIComponent('Hello, I would like to confirm my attendance at Islam Sherif’s Henna Ceremony.');
+    window.open('https://wa.me/'+RSVP_WHATSAPP+'?text='+msg,'_blank','noopener');
+  }else{
+    const name=prompt('Enter your name to prepare your RSVP message:');
+    if(name){const msg=encodeURIComponent('Hello, I would like to confirm my attendance at Islam Sherif’s Henna Ceremony. Name: '+name);
+      if(navigator.share){navigator.share({title:'Henna Ceremony RSVP',text:decodeURIComponent(msg)}).catch(()=>{});}
+      else{window.location.href='mailto:?subject='+encodeURIComponent('Henna Ceremony RSVP')+'&body='+msg;}
+    }
+  }
+});
+document.getElementById('shareBtn').addEventListener('click',async()=>{
+  try{if(navigator.share){await navigator.share({title:'Islam Sherif — Henna Ceremony',text:'You are invited to Islam Sherif’s Henna Ceremony!',url:INVITATION_URL});}
+  else if(navigator.clipboard){await navigator.clipboard.writeText(INVITATION_URL);statusEl.textContent='Invitation link copied';}
+  else{prompt('Copy invitation link:',INVITATION_URL);}}
+  catch(e){}
+});
+document.getElementById('photosBtn').addEventListener('click',()=>{
+  if(PHOTOS_URL){window.open(PHOTOS_URL,'_blank','noopener');}
+  else{const link=prompt('Paste the shared photo album link to open it:'); if(link && /^https?:\\/\\//i.test(link)){window.location.href=link;} else if(link){alert('Please enter a full link starting with https://');}}
+});
+document.getElementById('musicToggle').addEventListener('click',async()=>{
+  if(music.paused){try{await music.play();document.getElementById('musicToggle').textContent='♫ Music on';}catch(e){statusEl.textContent='Music could not start. Tap again.';}}
+  else{music.pause();document.getElementById('musicToggle').textContent='♫ Music off';}
+});
+</script>
+</body>
+</html>
